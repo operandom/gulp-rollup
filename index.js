@@ -7,7 +7,7 @@ var path        = require('path'),
     rollup      = require('rollup'),
     PLUGIN_NAME = 'gulp-rollup',
     PluginError = gutil.PluginError,
-    Plugin      = require('rollup-plugin-vinyl'),
+    VinylSource = require('rollup-plugin-vinyl'),
     apply       = require('vinyl-sourcemaps-apply')
 ;
 
@@ -74,7 +74,7 @@ function gulpRollup(options) {
 function transform (plugins, options, file, callback) {
   rollup.rollup({
     entry: file.path,
-    plugins: [Plugin(file)].concat(plugins)
+    plugins: [VinylSource(file)].concat(plugins)
   })
   .then(
     function (bundle) {
@@ -110,9 +110,9 @@ function generate(bundle, options, file, callback) {
 
   if (result.map) {
     map = result.map;
-    map.file = Plugin.unix(file.relative);
+    map.file = VinylSource.unix(file.relative);
     map.sources = map.sources.map(function(fileName) {
-      return Plugin.unix(path.relative(file.base, fileName));
+      return VinylSource.unix(path.relative(file.base, fileName));
     });
 
     apply(file, map);
